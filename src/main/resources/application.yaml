@@ -5,5 +5,14 @@ spring:
     password: ali123
   jpa:
     hibernate:
-      ddl-auto: create-drop   # 開發期先用 create-drop
-    show-sql: true
+      ddl-auto: update    # 開發期先用 create-drop，會在應用停止時刪除表格
+    show-sql: true            # 顯示Hibernate執行的SQL，但不會顯示data.sql的執行
+  
+  # 以下設定控制data.sql的執行
+  sql:
+    init:
+      mode: always            # 總是執行SQL初始化腳本(data.sql)
+  
+  # 確保Hibernate先建表，再執行data.sql
+  # 若不設定此項，data.sql可能在表格建立前執行，導致錯誤
+  jpa.defer-datasource-initialization: true
