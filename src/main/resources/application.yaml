@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: ali123
+  jpa:
+    hibernate:
+      ddl-auto: create-drop   # 開發期先用 create-drop
+    show-sql: true
