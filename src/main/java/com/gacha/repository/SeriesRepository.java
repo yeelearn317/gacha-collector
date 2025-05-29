@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface SeriesRepository extends JpaRepository<Series, Long> {
-    List<Series> findByBrand_Id(Long brandId);
+    List<Series> findByBrandId(Long brandId);
+    List<Series> findByNameContaining(String name);
 } 

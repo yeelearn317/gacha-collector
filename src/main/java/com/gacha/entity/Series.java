@@ -1,20 +1,30 @@
 package com.gacha.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import lombok.Getter;
-import lombok.Setter;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import java.time.LocalDate;
+import jakarta.persistence.*;
+import lombok.Data;
+import java.util.List;
 
+@Data
 @Entity
-@Getter @Setter
-public class Series extends BaseEntity {
+@Table(name = "series")
+public class Series {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
 
-    private String title;
-    private LocalDate releaseMonth;   // 2025-05-01 代表 2025-05
+    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL)
+    private List<Item> items;
+
+    @Column
+    private String releaseMonth;
 }

@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @TestPropertySource(properties = {
     // 這個屬性會在測試執行完後刪除所有表格，確保測試環境的乾淨
-    "spring.jpa.hibernate.ddl-auto=update",
+    "spring.jpa.hibernate.ddl-auto=create-drop",
     // 這個屬性會讓Spring Boot總是執行SQL初始化腳本(data.sql)
     "spring.sql.init.mode=always",
     // 這個屬性會讓Spring等Hibernate建完表後再執行data.sql
@@ -41,15 +41,15 @@ class SeriesRepositoryTest {
      * 測試執行流程:
      * 1. Spring Boot啟動測試環境，根據實體類創建表結構
      * 2. 執行src/main/resources/data.sql，插入種子資料
-     * 3. 執行測試方法，調用findByBrand_Id查詢
+     * 3. 執行測試方法，調用findByBrandId查詢
      * 4. 測試結束後，刪除所有表格
      */
     @Test
     void shouldFindByBrand() {
-        List<Series> series = repo.findByBrand_Id(1L);
+        List<Series> series = repo.findByBrandId(1L);
         System.out.println("查詢結果: " + series.size() + " 條記錄");
         for (Series s : series) {
-            System.out.println("Series: " + s.getTitle() + ", Brand ID: " + s.getBrand().getId());
+            System.out.println("Series: " + s.getName() + ", Brand ID: " + s.getBrand().getId());
         }
         assertThat(series).hasSizeGreaterThan(0);
     }

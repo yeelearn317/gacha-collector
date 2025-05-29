@@ -1,14 +1,23 @@
 package com.gacha.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.Data;
+import java.util.List;
 
+@Data
 @Entity
-@Getter @Setter
-@Table(name = "brand", uniqueConstraints = @UniqueConstraint(columnNames = "name"))
-public class Brand extends BaseEntity {
+@Table(name = "brands")
+public class Brand {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Column
+    private String description;
+
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
+    private List<Series> series;
 }
