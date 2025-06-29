@@ -36,8 +36,10 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public BrandDTO save(BrandDTO dto) {
-        Brand brand = toEntity(dto);
+    public BrandDTO save(BrandRequestDTO request) {
+        Brand brand = new Brand();
+        brand.setName(request.getName());
+        brand.setDescription(request.getDescription());
         return toDTO(brandRepository.save(brand));
     }
 
