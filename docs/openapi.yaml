@@ -1,0 +1,454 @@
+openapi: 3.0.3
+info:
+  title: Gacha Collector API
+  description: 扭蛋收藏家 API 文件
+  version: 1.0.0
+  contact:
+    name: Gacha Collector Team
+    email: support@gacha-collector.com
+
+servers:
+  - url: http://localhost:8080
+    description: 本地開發環境
+
+components:
+  schemas:
+    Brand:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 品牌ID
+        name:
+          type: string
+          description: 品牌名稱
+        description:
+          type: string
+          description: 品牌描述
+      required:
+        - name
+
+    Series:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 系列ID
+        name:
+          type: string
+          description: 系列名稱
+        description:
+          type: string
+          description: 系列描述
+        brandId:
+          type: integer
+          format: int64
+          description: 所屬品牌ID
+        releaseMonth:
+          type: string
+          description: 發售月份
+      required:
+        - name
+        - brandId
+
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 商品ID
+        name:
+          type: string
+          description: 商品名稱
+        description:
+          type: string
+          description: 商品描述
+        janCode:
+          type: string
+          description: 日本商品條碼
+        rarity:
+          type: string
+          enum: [COMMON, RARE, SECRET]
+          description: 稀有度
+        price:
+          type: number
+          format: float
+          description: 商品價格
+        imageUrl:
+          type: string
+          description: 商品圖片網址
+        seriesId:
+          type: integer
+          format: int64
+          description: 所屬系列ID
+      required:
+        - name
+        - seriesId
+
+    Inventory:
+      type: object
+      properties:
+        id:
+          type: string
+          description: MongoDB 文件ID
+        itemId:
+          type: integer
+          format: int64
+          description: 商品ID
+        quantity:
+          type: integer
+          description: 擁有數量
+        photoUrl:
+          type: string
+          description: 實拍照網址
+        createdAt:
+          type: string
+          format: date-time
+          description: 建立時間
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新時間
+      required:
+        - itemId
+        - quantity
+
+paths:
+  /api/brands:
+    get:
+      summary: 取得所有品牌
+      responses:
+        '200':
+          description: 成功取得品牌列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brand'
+    post:
+      summary: 新增品牌
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Brand'
+      responses:
+        '201':
+          description: 成功新增品牌
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+
+  /api/brands/{id}:
+    get:
+      summary: 取得單一品牌
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 成功取得品牌
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+    put:
+      summary: 更新品牌
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Brand'
+      responses:
+        '200':
+          description: 成功更新品牌
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+    delete:
+      summary: 刪除品牌
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 成功刪除品牌
+
+  /api/series:
+    get:
+      summary: 取得所有系列
+      parameters:
+        - name: brandId
+          in: query
+          schema:
+            type: integer
+            format: int64
+          description: 品牌ID（選填）
+      responses:
+        '200':
+          description: 成功取得系列列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Series'
+    post:
+      summary: 新增系列
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Series'
+      responses:
+        '201':
+          description: 成功新增系列
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+
+  /api/series/{id}:
+    get:
+      summary: 取得單一系列
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 成功取得系列
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+    put:
+      summary: 更新系列
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Series'
+      responses:
+        '200':
+          description: 成功更新系列
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+    delete:
+      summary: 刪除系列
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 成功刪除系列
+
+  /api/items:
+    get:
+      summary: 取得所有商品
+      parameters:
+        - name: seriesId
+          in: query
+          schema:
+            type: integer
+            format: int64
+          description: 系列ID（選填）
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          description: 關鍵字搜尋（選填）
+      responses:
+        '200':
+          description: 成功取得商品列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+    post:
+      summary: 新增商品
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '201':
+          description: 成功新增商品
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+
+  /api/items/{id}:
+    get:
+      summary: 取得單一商品
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 成功取得商品
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+    put:
+      summary: 更新商品
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '200':
+          description: 成功更新商品
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+    delete:
+      summary: 刪除商品
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 成功刪除商品
+
+  /api/inventory:
+    get:
+      summary: 取得庫存列表
+      responses:
+        '200':
+          description: 成功取得庫存列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Inventory'
+    post:
+      summary: 新增庫存記錄
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Inventory'
+      responses:
+        '201':
+          description: 成功新增庫存記錄
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inventory'
+
+  /api/inventory/{id}:
+    get:
+      summary: 取得單一庫存記錄
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功取得庫存記錄
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inventory'
+    put:
+      summary: 更新庫存記錄
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Inventory'
+      responses:
+        '200':
+          description: 成功更新庫存記錄
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inventory'
+    delete:
+      summary: 刪除庫存記錄
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 成功刪除庫存記錄 
